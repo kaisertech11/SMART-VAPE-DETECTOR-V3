@@ -118,6 +118,7 @@
     }
     .status-detected { background: rgba(231, 76, 60, 0.25); color: #ff6b6b; }
     .status-normal { background: rgba(46, 204, 113, 0.25); color: #2ecc71; }
+    .status-offline { background: rgba(127, 140, 141, 0.3); color: #95a5a6; }
 
     .device-info {
       display: flex;
@@ -152,6 +153,7 @@
     .battery-low { color: #ff6b6b; }
     .battery-medium { color: #feca57; }
     .battery-high { color: #2ecc71; }
+    .battery-off { color: #95a5a6; }
 
     .detection-img {
       width: 100%;
@@ -197,13 +199,13 @@
       </div>
       <div class="glass-card stat-card">
         <i class="fas fa-battery-full" style="color: #1dd1a1;"></i>
-        <div class="stat-value">3</div>
+        <div class="stat-value">2</div>
         <div class="stat-label">Peranti Berkuasa</div>
       </div>
       <div class="glass-card stat-card">
-        <i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i>
-        <div class="stat-value">2</div>
-        <div class="stat-label">Bateri Rendah</div>
+        <i class="fas fa-power-off" style="color: #e74c3c;"></i>
+        <div class="stat-value">1</div>
+        <div class="stat-label">Peranti Mati</div>
       </div>
     </div>
 
@@ -246,27 +248,27 @@
         </div>
       </div>
 
-      <!-- Item 3: Vape + Bateri Amaran -->
+      <!-- Item 3: PERANTI MATI (BATERI HABIS / KUASA MATI) -->
       <div class="detection-item">
-        <div class="detection-icon"><i class="fas fa-camera"></i></div>
+        <div class="detection-icon"><i class="fas fa-power-off"></i></div>
         <div class="detection-content">
           <div class="detection-header">
             <span class="location-name">Pusat Sukan Bandar</span>
-            <span class="status-badge status-detected">⚠️ Vape Dikesan</span>
+            <span class="status-badge status-offline">⚠️ Tidak Aktif</span>
           </div>
           <div class="device-info">
-            <span class="detection-time">01 Dis 2025, 10:05</span>
-            <span class="battery battery-low">
-              <span class="battery-icon"></span> 10%
+            <span class="detection-time">Terakhir Aktif: 01 Dis 2025, 10:05</span>
+            <span class="battery battery-off">
+              <span class="battery-icon"></span> 0% / Mati
             </span>
           </div>
-          <img src="https://via.placeholder.com/500x300/1a2a6c/ffffff?text=Gambar+Vape+10:05" alt="Gambar Pengesanan" class="detection-img" />
+          <!-- Tiada gambar kerana peranti tidak aktif -->
         </div>
       </div>
     </div>
 
     <div class="note">
-      ⚠️ Ini adalah demo UI. Dalam sistem sebenar, tahap bateri dihantar oleh ESP32 (contoh: dari sensor voltan bateri) dan dikemas kini secara masa nyata.
+      ⚠️ Ini adalah demo UI. Dalam sistem sebenar, ESP32 boleh hantar status kuasa (contoh: dari pembacaan voltan atau heartbeat). Peranti "mati" ditanda apabila tiada kemas kini lebih daripada 5 minit.
     </div>
   </div>
 
