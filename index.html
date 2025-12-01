@@ -3,110 +3,234 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smart Vape Detector – Demo</title>
+  <title>Smart Vape Detector – Dashboard Moden</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f4f8;
-      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+      min-height: 100vh;
       padding: 20px;
-      color: #333;
+      color: #fff;
     }
-    .header {
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
       text-align: center;
       margin-bottom: 30px;
-      padding: 15px;
-      background: #1a5276;
-      color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    header h1 {
+      font-size: 2.4rem;
+      letter-spacing: 1px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 15px 25px;
+      border-radius: 20px;
+      display: inline-block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
       padding: 20px;
       margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
     }
-    .status-detected { border-left: 6px solid #e74c3c; }
-    .status-normal { border-left: 6px solid #27ae60; }
-    .location {
-      font-size: 1.2em;
+    .glass-card:hover {
+      transform: translateY(-3px);
+    }
+
+    /* Statistik Grid */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 20px 10px;
+    }
+    .stat-card i {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .stat-value {
+      font-size: 2rem;
       font-weight: bold;
-      color: #2980b9;
-      margin-bottom: 6px;
+      margin: 5px 0;
+    }
+    .stat-label {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* Detection Log */
+    .detections-title {
+      margin: 20px 0 15px;
+      font-size: 1.4rem;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .detection-item {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .detection-icon {
+      font-size: 1.8rem;
+      color: #ff6b6b;
+      margin-top: 4px;
+    }
+    .detection-content {
+      flex: 1;
+    }
+    .detection-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .location-name {
+      font-weight: bold;
+      font-size: 1.1rem;
     }
     .status-badge {
-      display: inline-block;
       padding: 4px 12px;
       border-radius: 20px;
+      font-size: 0.85rem;
       font-weight: bold;
-      font-size: 0.95em;
     }
-    .timestamp {
-      color: #7f8c8d;
-      font-size: 0.95em;
-      margin-top: 8px;
+    .status-detected {
+      background: rgba(231, 76, 60, 0.25);
+      color: #ff6b6b;
     }
-    .img-container {
-      margin-top: 15px;
-      text-align: center;
+    .status-normal {
+      background: rgba(46, 204, 113, 0.25);
+      color: #2ecc71;
     }
-    .img-container img {
-      max-width: 100%;
+    .detection-time {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    .detection-img {
+      width: 100%;
+      max-width: 250px;
       height: auto;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      margin-top: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
+
     .note {
       text-align: center;
-      color: #e67e22;
+      margin-top: 30px;
       font-style: italic;
-      margin-top: 10px;
-      font-size: 0.9em;
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .detection-item {
+        flex-direction: column;
+      }
+      .detection-icon {
+        align-self: flex-start;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>🛰️ Smart Vape Detector – Demo Reka Bentuk</h1>
-    <p>Versi statik (tanpa Firebase) untuk pemeriksaan UI/UX</p>
-  </div>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-smog"></i> Smart Vape Detector</h1>
+    </header>
 
-  <div id="detections" style="max-width: 900px; margin: 0 auto;">
-
-    <!-- Contoh Data 1: VAPE DIKESAN -->
-    <div class="card status-detected">
-      <div class="location">Tandas Sekolah A</div>
-      <span class="status-badge" style="background-color:#e74c3c20; color:#e74c3c;">⚠️ VAPE DIKESAN</span>
-      <div class="timestamp">Masa: 01/12/2025 14:30:22</div>
-      <div class="img-container">
-        <img src="https://via.placeholder.com/500x300?text=Gambar+Vape+Dikesan" alt="Gambar Pengesanan" />
+    <!-- Statistik Palsu -->
+    <div class="stats">
+      <div class="glass-card stat-card">
+        <i class="fas fa-bell" style="color: #ff9ff3;"></i>
+        <div class="stat-value">24</div>
+        <div class="stat-label">Pengesanan Bulan Ini</div>
+      </div>
+      <div class="glass-card stat-card">
+        <i class="fas fa-map-marker-alt" style="color: #54a0ff;"></i>
+        <div class="stat-value">5</div>
+        <div class="stat-label">Lokasi Aktif</div>
+      </div>
+      <div class="glass-card stat-card">
+        <i class="fas fa-exclamation-triangle" style="color: #feca57;"></i>
+        <div class="stat-value">8</div>
+        <div class="stat-label">Amaran Terkini</div>
+      </div>
+      <div class="glass-card stat-card">
+        <i class="fas fa-chart-line" style="color: #1dd1a1;"></i>
+        <div class="stat-value">92%</div>
+        <div class="stat-label">Ketepatan Sistem</div>
       </div>
     </div>
 
-    <!-- Contoh Data 2: Tiada Vape -->
-    <div class="card status-normal">
-      <div class="location">Hospital Klang Tingkat 2</div>
-      <span class="status-badge" style="background-color:#27ae6020; color:#27ae60;">✅ TIADA ASAP</span>
-      <div class="timestamp">Masa: 01/12/2025 13:15:45</div>
-      <!-- Tiada gambar kerana tiada pengesanan -->
+    <!-- Log Pengesanan -->
+    <h2 class="detections-title"><i class="fas fa-list"></i> Log Pengesanan Terkini</h2>
+
+    <div class="glass-card">
+      <!-- Item 1 -->
+      <div class="detection-item">
+        <div class="detection-icon"><i class="fas fa-camera"></i></div>
+        <div class="detection-content">
+          <div class="detection-header">
+            <span class="location-name">Tandas Sekolah SMK Klang</span>
+            <span class="status-badge status-detected">⚠️ Vape Dikesan</span>
+          </div>
+          <div class="detection-time">01 Dis 2025, 14:30</div>
+          <img src="https://via.placeholder.com/500x300/2c3e50/ffffff?text=Gambar+Vape+14:30" alt="Gambar Pengesanan" class="detection-img" />
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="detection-item">
+        <div class="detection-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="detection-content">
+          <div class="detection-header">
+            <span class="location-name">Hospital Klang Tingkat 2</span>
+            <span class="status-badge status-normal">✅ Normal</span>
+          </div>
+          <div class="detection-time">01 Dis 2025, 13:15</div>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="detection-item">
+        <div class="detection-icon"><i class="fas fa-camera"></i></div>
+        <div class="detection-content">
+          <div class="detection-header">
+            <span class="location-name">Pusat Sukan Bandar</span>
+            <span class="status-badge status-detected">⚠️ Vape Dikesan</span>
+          </div>
+          <div class="detection-time">01 Dis 2025, 10:05</div>
+          <img src="https://via.placeholder.com/500x300/1a2a6c/ffffff?text=Gambar+Vape+10:05" alt="Gambar Pengesanan" class="detection-img" />
+        </div>
+      </div>
     </div>
 
-    <!-- Contoh Data 3: VAPE DIKESAN (tanpa gambar) -->
-    <div class="card status-detected">
-      <div class="location">Pusat Sukan Bandar</div>
-      <span class="status-badge" style="background-color:#e74c3c20; color:#e74c3c;">⚠️ VAPE DIKESAN</span>
-      <div class="timestamp">Masa: 01/12/2025 10:05:11</div>
-      <!-- Tiada imageUrl → tiada gambar -->
+    <div class="note">
+      ⚠️ Ini adalah demo UI. Data sebenar akan dimuat dari Firebase apabila sistem IoT disambungkan.
     </div>
-
-  </div>
-
-  <div class="note">
-    ⚠️ Ini adalah versi DEMO. Data sebenar akan dimuat dari Firebase apabila disambungkan.
   </div>
 
 </body>
