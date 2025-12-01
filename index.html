@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Vape Detector – Dashboard</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #333; }
+    .header { text-align: center; margin-bottom: 30px; padding: 10px; background: #2c3e50; color: white; border-radius: 10px; }
+    .card { background: white; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+    .status-detected { border-left: 6px solid #e74c3c; }
+    .status-normal { border-left: 6px solid #2ecc71; }
+    .location { font-size: 1.2em; font-weight: bold; color: #2980b9; margin-bottom: 8px; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.95em; }
+    .timestamp { color: #7f8c8d; font-size: 0.95em; margin-top: 8px; }
+    .img-container { margin-top: 15px; text-align: center; }
+    .img-container img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    #loading { text-align: center; padding: 30px; color: #95a5a6; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🛰️ Smart Vape Detector – Dashboard</h1>
+    <p>Data masa nyata dari sistem IoT berbasis ESP32 & Firebase</p>
+  </div>
+
+  <div id="detections" style="max-width: 900px; margin: 0 auto;">
+    <div id="loading">Memuatkan data dari Firebase...</div>
+  </div>
+
+  <!-- Firebase SDK (Compat Mode for ease) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <script>
+    // 🔥 Konfigurasi Firebase – TELAH DIISI DENGAN PROJECT ANDA
+    const firebaseConfig = {
+      apiKey: "AIzaSyDg6KF3uB6E_Xfbqr3Zm383LCPxIUlF5U8",
+      authDomain: "smart-vape-detector-v3.firebaseapp.com",
+      databaseURL: "https://smart-vape-detector-v3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "smart-vape-detector-v3",
+      storageBucket: "smart-vape-detector-v3.firebasestorage.app",
+      messagingSenderId: "267340506532",
+      appId: "1:267340506532:web:b543f576079d39ba400d31"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function formatTime(isoStr) {
+      const d = new Date(isoStr);
+      return d.toLocaleString('ms-MY', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+    }
+
+    function renderDetections(snapshot) {
+      const data = snapshot.val();
+      const container = document.getElementById("detections");
+
+      if (!data) {
+        container.innerHTML = '<div class="card" style="text-align:center;color:#e74c3c;">Tiada rekod pengesanan vape.</div>';
+        return;
+      }
+
+      // Susun ikut masa terkini
+      const list = Object.entries(data)
+        .map(([id, d]) => ({ id, ...d }))
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      let html = '';
+      list.forEach(item => {
+        const isDetected = item.status === "detected";
+        const statusText = isDetected ? "⚠️ VAPE DIKESAN" : "✅ TIADA ASAP";
+        const statusColor = isDetected ? "#e74c3c" : "#2ecc71";
+        const cardClass = isDetected ? "status-detected" : "status-normal";
+
+        html += `
+          <div class="card ${cardClass}">
+            <div class="location">${item.location || "Lokasi Tidak Diketahui"}</div>
+            <span class="status-badge" style="background-color:${statusColor}20; color:${statusColor};">${statusText}</span>
+            <div class="timestamp">Masa: ${formatTime(item.timestamp)}</div>
+            ${item.imageUrl ? `
+              <div class="img-container">
+                <img src="${item.imageUrl}" alt="Gambar Pengesanan" 
+                     onerror="this.src='https://via.placeholder.com/400x300?text=Gambar+Tidak+Dimuat'; this.onerror=null;" />
+              </div>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // Dengar data secara langsung
+    db.ref("detections").on("value", renderDetections, (error) => {
+      console.error("Ralat Firebase:", error);
+      document.getElementById("detections").innerHTML = 
+        '<div class="card" style="text-align:center;color:#c0392b;">Gagal memuatkan data. Semak sambungan internet atau konfigurasi Firebase.</div>';
+    });
+  </script>
+</body>
+</html>
